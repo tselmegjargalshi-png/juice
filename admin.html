@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FreshBlend Yönetici Paneli</title>
+<link rel="icon" href="assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f7efe6}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(90% 90% at 100% 0%,var(--orange),transparent 55%),radial-gradient(90% 90% at 0% 100%,var(--green),transparent 55%),linear-gradient(135deg,var(--magenta),var(--magenta-d))}
+.login .box{background:#fff;border-radius:30px;padding:30px 24px;width:100%;max-width:380px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.login img{width:130px;height:130px;margin:-70px auto 8px;border-radius:50%;box-shadow:0 10px 26px rgba(0,0,0,.25);background:#fff}
+.login h1{font-family:var(--script);font-weight:400;color:var(--magenta);font-size:1.7rem}
+.login p{color:var(--muted);font-weight:700;margin:4px 0 16px;font-size:.92rem}
+.in{width:100%;padding:13px 16px;border-radius:14px;border:2px solid var(--line);background:#fff;outline:none;margin-bottom:12px}
+.in:focus{border-color:var(--orange)}
+.err{color:var(--magenta);font-weight:800;min-height:1.3em;margin-bottom:6px;font-size:.88rem}
+
+.app{display:none;min-height:100vh}
+.app.on{display:block}
+.bar{position:sticky;top:0;z-index:30;background:linear-gradient(100deg,var(--green-d),var(--magenta-d));color:#fff;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.bar img{width:42px;height:42px;border-radius:50%;background:#fff}
+.bar b{font-family:var(--script);font-weight:400;font-size:1.3rem;flex:1}
+.bar a,.bar button{color:#fff;font-weight:800;font-size:.85rem;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.18);text-decoration:none}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:29;scrollbar-width:none}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px 70px}
+.panel{display:none}
+.panel.on{display:block;animation:pop .35s both}
+h2.t{font-family:var(--script);font-weight:400;font-size:1.8rem;color:var(--magenta);margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.stat2{background:#fff;border-radius:22px;padding:18px;box-shadow:0 4px 16px rgba(43,26,36,.07);position:relative;overflow:hidden}
+.stat2::after{content:"";position:absolute;right:-18px;top:-18px;width:70px;height:70px;border-radius:50%;background:var(--grad);opacity:.16}
+.stat2 b{font-size:2rem;font-weight:900;color:var(--magenta-d);display:block;line-height:1.1}
+.stat2 span{color:var(--muted);font-weight:800;font-size:.85rem}
+.box2{background:#fff;border-radius:24px;padding:18px;box-shadow:0 4px 16px rgba(43,26,36,.07);margin-bottom:16px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tools .in{margin:0;flex:1;min-width:160px}
+.btn.sm{padding:10px 16px;border-radius:13px;font-size:.88rem}
+.btn.red{background:#c0233b}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 8px}
+td{padding:10px 8px;border-top:1px solid var(--line);font-weight:700;font-size:.92rem;vertical-align:middle}
+td .nm{font-weight:900;color:var(--magenta-d)}
+td .ph{width:46px;height:46px;border-radius:12px;object-fit:cover;background:var(--orange-l);display:grid;place-items:center;font-size:1.3rem}
+td .acts{display:flex;gap:6px;justify-content:flex-end}
+.mini{padding:7px 11px;border-radius:10px;font-weight:800;font-size:.8rem;background:var(--green-l);color:var(--green-d)}
+.mini.d{background:var(--magenta-l);color:var(--magenta-d)}
+.algs{display:flex;gap:4px;flex-wrap:wrap}
+
+.modal-bg{position:fixed;inset:0;background:rgba(43,26,36,.6);z-index:70;display:none;place-items:center;padding:14px}
+.modal-bg.on{display:grid}
+.modal{background:var(--cream);border-radius:28px;width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:22px}
+.modal h3{font-family:var(--script);font-weight:400;font-size:1.6rem;color:var(--magenta);margin-bottom:12px}
+.lbl{display:block;font-weight:900;font-size:.82rem;color:var(--muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.achk{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.achk label{display:flex;gap:8px;align-items:center;padding:8px;border-radius:12px;background:#fff;border:2px solid var(--line);font-weight:800;font-size:.82rem;cursor:pointer}
+.achk input{accent-color:var(--magenta);width:18px;height:18px}
+.achk label:has(input:checked){border-color:var(--magenta);background:var(--magenta-l)}
+.drop{border:3px dashed var(--orange);background:var(--orange-l);border-radius:20px;padding:18px;text-align:center;font-weight:800;color:var(--magenta-d);cursor:pointer}
+.drop img{max-height:160px;margin:0 auto 10px;border-radius:14px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.gcard{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 14px rgba(43,26,36,.08);text-align:center}
+.gcard .im{height:130px;background:var(--orange-l);display:grid;place-items:center;font-size:2.4rem;overflow:hidden}
+.gcard .im img{width:100%;height:100%;object-fit:cover}
+.gcard .nm{font-weight:900;font-size:.85rem;padding:8px 8px 2px;color:var(--magenta-d)}
+.gcard .row{display:flex;gap:6px;padding:6px 8px 10px;justify-content:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--green-d);color:#fff;padding:12px 22px;border-radius:16px;font-weight:900;z-index:90;transition:.35s;opacity:0}
+.toast.on{transform:translateX(-50%);opacity:1}
+.toast.bad{background:var(--magenta-d)}
+.hint2{color:var(--muted);font-weight:700;font-size:.88rem;margin:4px 0 10px}
+.cats{display:flex;flex-direction:column;gap:8px}
+.cats .r{display:grid;grid-template-columns:54px 1fr 1.4fr auto;gap:8px;align-items:center}
+@media (max-width:640px){
+  .hide-s{display:none}
+  .two{grid-template-columns:1fr}
+  .cats .r{grid-template-columns:50px 1fr auto}
+  .cats .r .dsc{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <div class="box">
+    <img src="assets/logo.png" alt="">
+    <h1>Yönetici Girişi</h1>
+    <p>Menüyü düzenlemek için şifreni gir.</p>
+    <input class="in" id="pin" type="password" placeholder="Şifre" autocomplete="current-password">
+    <div class="err" id="err"></div>
+    <button class="btn" style="width:100%" id="go">Giriş Yap</button>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="bar">
+    <img src="assets/logo.png" alt="">
+    <b>FreshBlend Panel</b>
+    <a href="index.html" target="_blank">Menüyü Gör</a>
+    <button id="out">Çıkış</button>
+  </div>
+  <div class="nav" id="nav">
+    <button class="tab on" data-p="p1">📊 Panel</button>
+    <button class="tab" data-p="p2">🥤 Ürünler</button>
+    <button class="tab" data-p="p3">📷 Görsel Stüdyosu</button>
+    <button class="tab" data-p="p4">🗂️ Kategoriler</button>
+    <button class="tab" data-p="p5">⚙️ Site Ayarları</button>
+    <button class="tab" data-p="p6">💾 Yedekleme</button>
+  </div>
+
+  <div class="wrap">
+    <!-- PANEL -->
+    <section class="panel on" id="p1">
+      <h2 class="t">Genel Bakış</h2>
+      <div class="stats" id="stats"></div>
+      <div class="box2">
+        <b style="font-weight:900">Kategori dağılımı</b>
+        <div id="dist" style="margin-top:12px"></div>
+      </div>
+      <div class="box2">
+        <b style="font-weight:900">Hızlı ipucu</b>
+        <p class="hint2" style="margin-top:6px">Ürün fotoğrafı eklemek için “Görsel Stüdyosu” sekmesini kullan. Fotoğraf eklenen ürünler menüde otomatik olarak resimli görünür. Değişiklikler bu cihazdaki tarayıcıya kaydedilir; tüm cihazlarda kalıcı olması için “Yedekleme” sekmesindeki dosyayı depoya yükle.</p>
+      </div>
+    </section>
+
+    <!-- ÜRÜNLER -->
+    <section class="panel" id="p2">
+      <h2 class="t">Ürünler</h2>
+      <div class="tools">
+        <input class="in" id="psearch" placeholder="Ürün ara">
+        <select class="in" id="pcat" style="max-width:220px"></select>
+        <button class="btn sm" id="padd">+ Yeni Ürün</button>
+      </div>
+      <div class="box2" style="padding:6px 10px;overflow-x:auto">
+        <table><thead><tr><th></th><th>Ürün</th><th class="hide-s">Kategori</th><th>Kalori</th><th>Fiyat</th><th class="hide-s">Alerjen</th><th></th></tr></thead><tbody id="ptb"></tbody></table>
+      </div>
+    </section>
+
+    <!-- GÖRSEL STÜDYOSU -->
+    <section class="panel" id="p3">
+      <h2 class="t">Görsel Stüdyosu</h2>
+      <p class="hint2">Her ürün için fotoğraf yükle. Fotoğraflar otomatik küçültülür. İstersen aşağıdaki anahtarla menüde görselleri tamamen gizleyebilirsin.</p>
+      <div class="tools">
+        <label class="achk" style="display:block"><label><input type="checkbox" id="showImg"> Menüde ürün görsellerini göster</label></label>
+      </div>
+      <div class="gal" id="gal"></div>
+    </section>
+
+    <!-- KATEGORİLER -->
+    <section class="panel" id="p4">
+      <h2 class="t">Kategoriler</h2>
+      <div class="box2">
+        <div class="cats" id="cats"></div>
+        <div class="tools" style="margin-top:14px">
+          <button class="btn sm ghost" id="cadd">+ Kategori Ekle</button>
+          <button class="btn sm" id="csave">Kategorileri Kaydet</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AYARLAR -->
+    <section class="panel" id="p5">
+      <h2 class="t">Site Ayarları</h2>
+      <div class="box2">
+        <label class="lbl">Ana başlık (slogan)</label><input class="in" id="sSlogan">
+        <label class="lbl">Alt yazı</label><input class="in" id="sSub">
+        <label class="lbl">Duyuru şeridi (boş bırakırsan gizlenir)</label><input class="in" id="sNotice">
+        <div class="two">
+          <div><label class="lbl">Adres</label><input class="in" id="sAddr"></div>
+          <div><label class="lbl">Telefon</label><input class="in" id="sPhone"></div>
+          <div><label class="lbl">Instagram kullanıcı adı</label><input class="in" id="sIg"></div>
+          <div><label class="lbl">Çalışma saatleri</label><input class="in" id="sHours"></div>
+        </div>
+        <label class="lbl">Yönetici şifresi</label><input class="in" id="sPin">
+        <label class="lbl">Ana sayfa kapak fotoğrafı</label>
+        <div class="drop" id="heroDrop"></div>
+        <input type="file" id="heroFile" accept="image/*" hidden>
+        <div class="tools" style="margin-top:14px"><button class="btn" id="ssave">Ayarları Kaydet</button><button class="btn sm ghost" id="hclear">Kapak fotoğrafını kaldır</button></div>
+      </div>
+    </section>
+
+    <!-- YEDEK -->
+    <section class="panel" id="p6">
+      <h2 class="t">Yedekleme</h2>
+      <div class="box2">
+        <p class="hint2">Menünü bir dosya olarak indir, başka cihazda yükle ya da yedek olarak sakla.</p>
+        <div class="tools">
+          <button class="btn sm" id="bexp">Menüyü Dışa Aktar</button>
+          <button class="btn sm ghost" id="bimp">Dosyadan İçe Aktar</button>
+          <button class="btn sm red" id="brst">Varsayılana Sıfırla</button>
+        </div>
+        <input type="file" id="impFile" accept="application/json" hidden>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ÜRÜN MODALI -->
+<div class="modal-bg" id="mbg">
+  <div class="modal">
+    <h3 id="mtitle">Ürün</h3>
+    <label class="lbl">Ürün adı</label><input class="in" id="fName">
+    <label class="lbl">Açıklama</label><input class="in" id="fDesc">
+    <div class="two">
+      <div><label class="lbl">Kategori</label><select class="in" id="fCat"></select></div>
+      <div><label class="lbl">Rozet</label>
+        <select class="in" id="fBadge"><option value="">Yok</option><option>İmza</option><option>Yeni</option><option>Vegan</option></select></div>
+      <div><label class="lbl">Kalori (kcal)</label><input class="in" id="fKcal" type="number" min="0"></div>
+      <div><label class="lbl">Fiyat (₺)</label><input class="in" id="fPrice" type="number" min="0"></div>
+    </div>
+    <label class="lbl">Alerjenler</label>
+    <div class="achk" id="fAlg"></div>
+    <label class="lbl" style="margin-top:12px">Ürün fotoğrafı</label>
+    <div class="drop" id="fDrop"></div>
+    <input type="file" id="fFile" accept="image/*" hidden>
+    <div class="tools" style="margin-top:16px;justify-content:flex-end">
+      <button class="btn sm ghost" id="mcancel">Vazgeç</button>
+      <button class="btn sm" id="msave">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="store.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var S = FB.load();
+  var algMap = {}; S.allergens.forEach(function (a) { algMap[a.id] = a; });
+  var SESSION = "fb_admin_ok";
+
+  function toast(msg, bad) {
+    var t = $("toast"); t.textContent = msg; t.className = "toast on" + (bad ? " bad" : "");
+    clearTimeout(toast.h); toast.h = setTimeout(function () { t.className = "toast"; }, 2400);
+  }
+  function persist(msg) {
+    if (FB.save(S)) { if (msg) toast(msg); }
+    else toast("Kayıt başarısız: depolama dolu olabilir, görselleri küçült.", true);
+  }
+  function catName(id) { var c = S.categories.filter(function (x) { return x.id === id; })[0]; return c ? c.icon + " " + c.name : id; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]; }); }
+
+  /* Giriş */
+  function enter() { $("login").style.display = "none"; $("app").classList.add("on"); drawAll(); }
+  function tryLogin() {
+    if ($("pin").value === S.settings.pin) { try { sessionStorage.setItem(SESSION, "1"); } catch (e) {} enter(); }
+    else $("err").textContent = "Şifre hatalı, tekrar dene.";
+  }
+  $("go").onclick = tryLogin;
+  $("pin").onkeydown = function (e) { if (e.key === "Enter") tryLogin(); };
+  $("out").onclick = function () { try { sessionStorage.removeItem(SESSION); } catch (e) {} location.reload(); };
+  try { if (sessionStorage.getItem(SESSION)) enter(); } catch (e) {}
+
+  /* Sekmeler */
+  $("nav").addEventListener("click", function (e) {
+    var b = e.target.closest(".tab"); if (!b) return;
+    document.querySelectorAll("#nav .tab").forEach(function (t) { t.classList.toggle("on", t === b); });
+    document.querySelectorAll(".panel").forEach(function (p) { p.classList.toggle("on", p.id === b.dataset.p); });
+    drawAll();
+  });
+
+  /* Panel */
+  function drawStats() {
+    var n = S.items.length, withImg = S.items.filter(function (i) { return i.image; }).length;
+    var avgK = n ? Math.round(S.items.reduce(function (a, i) { return a + (+i.kcal || 0); }, 0) / n) : 0;
+    var avgP = n ? Math.round(S.items.reduce(function (a, i) { return a + (+i.price || 0); }, 0) / n) : 0;
+    var vegan = S.items.filter(function (i) { return i.badge === "Vegan"; }).length;
+    var cards = [[n, "Toplam ürün"], [S.categories.length, "Kategori"], [withImg + " / " + n, "Fotoğraflı ürün"], [avgK, "Ortalama kcal"], [FB.money(avgP), "Ortalama fiyat"], [vegan, "Vegan ürün"]];
+    $("stats").innerHTML = cards.map(function (c) { return '<div class="stat2"><b>' + c[0] + "</b><span>" + c[1] + "</span></div>"; }).join("");
+    var max = 1, counts = S.categories.map(function (c) { var k = S.items.filter(function (i) { return i.cat === c.id; }).length; if (k > max) max = k; return [c, k]; });
+    $("dist").innerHTML = counts.map(function (x) {
+      return '<div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-weight:800;font-size:.88rem"><span style="width:150px">' + x[0].icon + " " + esc(x[0].name) + '</span><div style="flex:1;background:#f4eadf;border-radius:99px;height:14px"><div style="height:14px;border-radius:99px;background:var(--grad);width:' + (x[1] / max * 100) + '%"></div></div><span>' + x[1] + "</span></div>";
+    }).join("");
+  }
+
+  /* Ürün tablosu */
+  function drawProducts() {
+    var cs = $("pcat"), cur = cs.value;
+    cs.innerHTML = '<option value="">Tüm kategoriler</option>' + S.categories.map(function (c) { return '<option value="' + c.id + '">' + c.icon + " " + esc(c.name) + "</option>"; }).join("");
+    cs.value = cur;
+    var q = $("psearch").value.trim().toLocaleLowerCase("tr");
+    var list = S.items.filter(function (i) { return (!cs.value || i.cat === cs.value) && (!q || i.name.toLocaleLowerCase("tr").indexOf(q) > -1); });
+    $("ptb").innerHTML = list.map(function (i) {
+      var th = i.image ? '<img class="ph" src="' + i.image + '">' : '<div class="ph">🥤</div>';
+      var al = (i.allergens || []).map(function (id) { return algMap[id] ? FB.allergenIcon(algMap[id], 22) : ""; }).join("");
+      return "<tr><td>" + th + '</td><td><div class="nm">' + esc(i.name) + "</div></td><td class=\"hide-s\">" + catName(i.cat) + "</td><td>" + i.kcal + "</td><td>" + FB.money(i.price) + '</td><td class="hide-s"><div class="algs">' + al + '</div></td><td><div class="acts"><button class="mini" data-e="' + i.id + '">Düzenle</button><button class="mini d" data-d="' + i.id + '">Sil</button></div></td></tr>';
+    }).join("") || '<tr><td colspan="7" class="empty">Ürün bulunamadı.</td></tr>';
+  }
+  $("psearch").oninput = drawProducts; $("pcat").onchange = drawProducts;
+  $("ptb").addEventListener("click", function (e) {
+    var ed = e.target.closest("[data-e]"), dl = e.target.closest("[data-d]");
+    if (ed) openModal(ed.dataset.e);
+    if (dl && confirm("Bu ürünü silmek istediğine emin misin?")) {
+      S.items = S.items.filter(function (i) { return i.id !== dl.dataset.d; });
+      persist("Ürün silindi"); drawAll();
+    }
+  });
+
+  /* Modal */
+  var editing = null, tmpImg = "";
+  function drawDrop(el, img, label) {
+    el.innerHTML = (img ? '<img src="' + img + '" alt="">' : "") + "<div>" + (img ? "Değiştirmek için dokun" : label) + "</div>";
+  }
+  function openModal(id) {
+    editing = id || null;
+    var it = id ? S.items.filter(function (i) { return i.id === id; })[0] : { name: "", desc: "", cat: S.categories[0].id, kcal: 0, price: 0, allergens: [], badge: "", image: "" };
+    $("mtitle").textContent = id ? "Ürünü Düzenle" : "Yeni Ürün";
+    $("fName").value = it.name; $("fDesc").value = it.desc; $("fKcal").value = it.kcal; $("fPrice").value = it.price;
+    $("fCat").innerHTML = S.categories.map(function (c) { return '<option value="' + c.id + '">' + c.icon + " " + esc(c.name) + "</option>"; }).join("");
+    $("fCat").value = it.cat; $("fBadge").value = it.badge || "";
+    $("fAlg").innerHTML = S.allergens.map(function (a) {
+      return '<label><input type="checkbox" value="' + a.id + '"' + (it.allergens.indexOf(a.id) > -1 ? " checked" : "") + ">" + FB.allergenIcon(a, 22) + "<span>" + a.name + "</span></label>";
+    }).join("");
+    tmpImg = it.image || "";
+    drawDrop($("fDrop"), tmpImg, "📷 Fotoğraf yüklemek için dokun");
+    $("mbg").classList.add("on");
+  }
+  $("padd").onclick = function () { openModal(null); };
+  $("mcancel").onclick = function () { $("mbg").classList.remove("on"); };
+  $("fDrop").onclick = function () { $("fFile").click(); };
+  $("fFile").onchange = function () {
+    var f = this.files[0]; if (!f) return;
+    FB.readImage(f, 800).then(function (d) { tmpImg = d; drawDrop($("fDrop"), d, ""); });
+    this.value = "";
+  };
+  $("msave").onclick = function () {
+    var name = $("fName").value.trim();
+    if (!name) { toast("Ürün adı gerekli", true); return; }
+    var algs = Array.prototype.map.call($("fAlg").querySelectorAll("input:checked"), function (x) { return x.value; });
+    var obj = { id: editing || FB.uid(), cat: $("fCat").value, name: name, desc: $("fDesc").value.trim(), kcal: +$("fKcal").value || 0, price: +$("fPrice").value || 0, allergens: algs, badge: $("fBadge").value, image: tmpImg };
+    if (editing) S.items = S.items.map(function (i) { return i.id === editing ? obj : i; });
+    else S.items.push(obj);
+    persist("Ürün kaydedildi"); $("mbg").classList.remove("on"); drawAll();
+  };
+
+  /* Görsel stüdyosu */
+  var galTarget = null;
+  var galInput = document.createElement("input"); galInput.type = "file"; galInput.accept = "image/*";
+  function drawGallery() {
+    $("showImg").checked = S.settings.showImages !== false;
+    $("gal").innerHTML = S.items.map(function (i) {
+      return '<div class="gcard"><div class="im">' + (i.image ? '<img src="' + i.image + '">' : "🥤") + '</div><div class="nm">' + esc(i.name) + '</div><div class="row"><button class="mini" data-u="' + i.id + '">' + (i.image ? "Değiştir" : "Yükle") + "</button>" + (i.image ? '<button class="mini d" data-r="' + i.id + '">Kaldır</button>' : "") + "</div></div>";
+    }).join("");
+  }
+  $("gal").addEventListener("click", function (e) {
+    var u = e.target.closest("[data-u]"), r = e.target.closest("[data-r]");
+    if (u) { galTarget = u.dataset.u; galInput.click(); }
+    if (r) { S.items.forEach(function (i) { if (i.id === r.dataset.r) i.image = ""; }); persist("Görsel kaldırıldı"); drawAll(); }
+  });
+  galInput.onchange = function () {
+    var f = galInput.files[0]; if (!f) return;
+    FB.readImage(f, 800).then(function (d) {
+      S.items.forEach(function (i) { if (i.id === galTarget) i.image = d; });
+      persist("Görsel yüklendi"); drawAll();
+    });
+    galInput.value = "";
+  };
+  $("showImg").onchange = function () { S.settings.showImages = this.checked; persist("Ayar kaydedildi"); };
+
+  /* Kategoriler */
+  function drawCats() {
+    $("cats").innerHTML = S.categories.map(function (c, k) {
+      return '<div class="r" data-k="' + k + '"><input class="in ci" style="margin:0;text-align:center" value="' + esc(c.icon) + '"><input class="in cn" style="margin:0" value="' + esc(c.name) + '"><input class="in dsc cd" style="margin:0" value="' + esc(c.desc || "") + '"><button class="mini d" data-cd="' + k + '">Sil</button></div>';
+    }).join("");
+  }
+  function readCats() {
+    var rows = document.querySelectorAll("#cats .r");
+    Array.prototype.forEach.call(rows, function (r) {
+      var c = S.categories[+r.dataset.k];
+      c.icon = r.querySelector(".ci").value; c.name = r.querySelector(".cn").value; c.desc = r.querySelector(".cd").value;
+    });
+  }
+  $("cadd").onclick = function () { readCats(); S.categories.push({ id: FB.uid(), name: "Yeni Kategori", icon: "🍹", desc: "" }); drawCats(); };
+  $("csave").onclick = function () { readCats(); persist("Kategoriler kaydedildi"); drawAll(); };
+  $("cats").addEventListener("click", function (e) {
+    var d = e.target.closest("[data-cd]"); if (!d) return;
+    readCats();
+    var c = S.categories[+d.dataset.cd];
+    var n = S.items.filter(function (i) { return i.cat === c.id; }).length;
+    if (n) { toast("Bu kategoride " + n + " ürün var, önce onları taşı veya sil.", true); return; }
+    S.categories.splice(+d.dataset.cd, 1); persist("Kategori silindi"); drawCats();
+  });
+
+  /* Site ayarları */
+  var heroTmp = null;
+  function drawSettings() {
+    var s = S.settings;
+    $("sSlogan").value = s.slogan; $("sSub").value = s.subslogan; $("sNotice").value = s.notice;
+    $("sAddr").value = s.address; $("sPhone").value = s.phone; $("sIg").value = s.instagram; $("sHours").value = s.hours; $("sPin").value = s.pin;
+    heroTmp = s.heroImage || "";
+    drawDrop($("heroDrop"), heroTmp, "📷 Kapak fotoğrafı yüklemek için dokun");
+  }
+  $("heroDrop").onclick = function () { $("heroFile").click(); };
+  $("heroFile").onchange = function () {
+    var f = this.files[0]; if (!f) return;
+    FB.readImage(f, 1200).then(function (d) { heroTmp = d; drawDrop($("heroDrop"), d, ""); });
+    this.value = "";
+  };
+  $("hclear").onclick = function () { heroTmp = ""; S.settings.heroImage = ""; drawDrop($("heroDrop"), "", "📷 Kapak fotoğrafı yüklemek için dokun"); persist("Kapak kaldırıldı"); };
+  $("ssave").onclick = function () {
+    var s = S.settings;
+    s.slogan = $("sSlogan").value.trim(); s.subslogan = $("sSub").value.trim(); s.notice = $("sNotice").value.trim();
+    s.address = $("sAddr").value.trim(); s.phone = $("sPhone").value.trim(); s.instagram = $("sIg").value.trim().replace(/^@/, "");
+    s.hours = $("sHours").value.trim(); s.pin = $("sPin").value.trim() || "blend2026"; s.heroImage = heroTmp || "";
+    persist("Ayarlar kaydedildi");
+  };
+
+  /* Yedekleme */
+  $("bexp").onclick = function () {
+    var blob = new Blob([JSON.stringify({ settings: S.settings, categories: S.categories, items: S.items }, null, 2)], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "freshblend_menu.json"; a.click();
+  };
+  $("bimp").onclick = function () { $("impFile").click(); };
+  $("impFile").onchange = function () {
+    var f = this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var d = JSON.parse(fr.result);
+        if (!d.items || !d.categories) throw 0;
+        S.settings = Object.assign(S.settings, d.settings || {}); S.categories = d.categories; S.items = d.items;
+        persist("İçe aktarıldı"); drawAll();
+      } catch (e) { toast("Dosya okunamadı", true); }
+    };
+    fr.readAsText(f); this.value = "";
+  };
+  $("brst").onclick = function () {
+    if (confirm("Tüm değişiklikler silinip varsayılan menüye dönülecek. Emin misin?")) { FB.reset(); S = FB.load(); toast("Sıfırlandı"); drawAll(); }
+  };
+
+  function drawAll() { drawStats(); drawProducts(); drawGallery(); drawCats(); drawSettings(); }
+})();
+</script>
+</body>
+</html>
